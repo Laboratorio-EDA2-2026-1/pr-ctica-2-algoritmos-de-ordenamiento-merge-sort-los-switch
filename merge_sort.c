@@ -34,22 +34,24 @@ void merge(int arr[], int left, int mid, int right);
 
 int main() {
     int n;
-    printf("Ingrese el número de datos y arreglos a ordenar (n ^ 2): ");
+    printf("Ingrese el número de arreglos (n): ");
     scanf("%d", &n);  // Leer el número de arreglos
 
     int total = n * n;  
     int *arr = (int *)malloc(total * sizeof(int));
 
+    printf("Ingrese %d números (%d arreglos de %d elementos):\n", total, n, n);
+    
     // Leer n arreglos de tamaño n
     for (int i = 0; i < total; i++) {
-        printf("Ingrese el número %d de tu arreglo %d: ", i + 1, i + 1);
+        printf("Número [%d] del arreglo: ", i + 1);
         scanf("%d", &arr[i]);
     }
 
     // Ordenar usando merge sort
     mergeSort(arr, 0, total - 1);
-    // Salto de línea
-    printf("\n");
+    
+    printf("\nArreglo ordenado:\n");
     
     // Imprimir el arreglo ordenado
     for (int i = 0; i < total; i++) {
@@ -61,27 +63,37 @@ int main() {
     return 0;
 }
 
-// ---- Implementa aquí tu función mergeSort ----
+// ---- Implementación de mergeSort ----
 void mergeSort(int arr[], int left, int right) {
     if (left < right) {
-        
+        // Calcular el punto medio correctamente
         int mid = left + (right - left) / 2;
         
-        mergeSort(arr,left, mid);
+        // Ordenar la primera mitad
+        mergeSort(arr, left, mid);
         
+        // Ordenar la segunda mitad
         mergeSort(arr, mid + 1, right);
 
+        // Combinar las dos mitades ordenadas
         merge(arr, left, mid, right);
-        }
     }
+}
 
-// ---- Implementa aquí tu función merge ----
+// ---- Implementación de merge ----
 void merge(int arr[], int left, int mid, int right) {
     int i, j, k;
     int s1 = mid - left + 1;
     int s2 = right - mid;
     
-    int left_arr[s1], right_arr[s2];
+    // Usar asignación dinámica para evitar problemas de stack overflow
+    int *left_arr = (int *)malloc(s1 * sizeof(int));
+    int *right_arr = (int *)malloc(s2 * sizeof(int));
+    
+    if (left_arr == NULL || right_arr == NULL) {
+        printf("Error: No se pudo asignar memoria\n");
+        exit(1);
+    }
     
     for(i = 0; i < s1; i++) {
         left_arr[i] = arr[left + i];
@@ -104,6 +116,7 @@ void merge(int arr[], int left, int mid, int right) {
         }
         k++;
     }
+    
     while (i < s1) {
         arr[k] = left_arr[i];
         i++;
@@ -115,4 +128,8 @@ void merge(int arr[], int left, int mid, int right) {
         j++;
         k++;
     }
+    
+    // Liberar memoria de los arreglos temporales
+    free(left_arr);
+    free(right_arr);
 }
